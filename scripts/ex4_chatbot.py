@@ -5,8 +5,8 @@ autorisés dans l'UE (EMA). La même recherche et le même prompt que dans le no
 dans une boucle. Le modèle reçoit tout l'historique de la conversation à chaque question.
 
 Lancer, depuis le dossier du cours :
-    python scripts/ex4_chatbot.py          # API (Groq)
-    python scripts/ex4_chatbot.py local    # modèle local (Ollama)
+    uv run python scripts/ex4_chatbot.py          # API (Groq)
+    uv run python scripts/ex4_chatbot.py local    # modèle local (Ollama)
 Une ligne vide pour quitter.
 
 À essayer :
