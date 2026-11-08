@@ -24,6 +24,7 @@ Follow `00-install-check/README.md`: install the packages, create your two free 
 | `00-install-check/` | the install check: run it at home |
 | `notebooks/` | the exercises, one marimo notebook each (`ex1_tokens.py` … `ex7_project.py`), with `course.py` and `checks.py` |
 | `demos/` | the base-vs-chat demo and an optional tiny-GPT training notebook |
+| `slides/` | the slides of both days, PDF |
 | `data/` | the abstracts, the medicine documents, the training text: sources and licences in `data/README.md` |
 
 ## Open an exercise
