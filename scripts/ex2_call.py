@@ -3,9 +3,9 @@
 Le même prompt, 5 fois, à la température que vous choisissez.
 
 Lancer, depuis le dossier du cours :
-    python notebooks/ex2_call.py 0          # API (Groq), température 0
-    python notebooks/ex2_call.py 1.5        # API (Groq), température 1,5
-    python notebooks/ex2_call.py 1.5 local  # modèle local (Ollama)
+    python scripts/ex2_call.py 0          # API (Groq), température 0
+    python scripts/ex2_call.py 1.5        # API (Groq), température 1,5
+    python scripts/ex2_call.py 1.5 local  # modèle local (Ollama)
 
 À essayer :
 1. Le prompt ci-dessous, à 0 puis à 1,5 : une réponse courte et factuelle change-t-elle ?
@@ -13,9 +13,11 @@ Lancer, depuis le dossier du cours :
    À 0, puis à 1,5 : combien de réponses différentes ?
 """
 import sys
+from pathlib import Path
 
 from openai import APIConnectionError
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "notebooks"))  # pour trouver course.py
 from course import PROVIDERS, client, normalise
 
 PROMPT = "What is the most common side effect of metformin? Answer in two words."

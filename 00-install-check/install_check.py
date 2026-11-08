@@ -1,14 +1,14 @@
 # %% [markdown]
-# # Install check — Introduction to LLM
+# # Install check: Introduction to LLM
 #
 # Run every cell, top to bottom (**Run All**), or in a terminal:
 # `uv run python install_check.py`.
 #
 # Each check prints one line: `OK`, `WARN` (optional, you can follow the
-# module without it) or `FAIL` (fix it before 9 November). The last cell
+# module without it) or `FAIL` (fix it before the first exercise). The last cell
 # prints **READY** or the list of what to fix.
 #
-# The first run downloads about 450 MB of model files. Run it at home.
+# The first run downloads about 450 MB of model files.
 
 # %%
 import importlib
@@ -34,7 +34,7 @@ version = sys.version_info
 if (3, 11) <= (version.major, version.minor) <= (3, 14):
     record("OK", "Python version", f"{version.major}.{version.minor}.{version.micro}")
 else:
-    record("FAIL", "Python version", f"{version.major}.{version.minor} — need 3.11 to 3.14")
+    record("FAIL", "Python version", f"{version.major}.{version.minor}: need 3.11 to 3.14")
 
 PACKAGES = [
     ("jupyter", "jupyter"),
@@ -121,16 +121,16 @@ else:
     record("FAIL", ".env file", f"not found in {os.getcwd()} or any folder above it")
 
 KEYS = [
-    ("GROQ_API_KEY", "gsk_", "https://console.groq.com — Groq with a q"),
+    ("GROQ_API_KEY", "gsk_", "https://console.groq.com: Groq with a q"),
     ("GEMINI_API_KEY", "", "https://aistudio.google.com"),
 ]
 
 for variable, prefix, where in KEYS:
     value = os.environ.get(variable, "")
     if not value:
-        record("FAIL", variable, f"missing — create one at {where}")
+        record("FAIL", variable, f"missing: create one at {where}")
     elif not value.startswith(prefix):
-        record("FAIL", variable, f"should start with {prefix!r} — check you copied it whole")
+        record("FAIL", variable, f"should start with {prefix!r}: check you copied it whole")
     else:
         record("OK", variable, f"{value[:6]}…")
 
@@ -160,7 +160,7 @@ if os.environ.get("GROQ_API_KEY"):
         "openai/gpt-oss-20b",
     )
 else:
-    record("FAIL", "Groq call", "skipped — no GROQ_API_KEY")
+    record("FAIL", "Groq call", "skipped: no GROQ_API_KEY")
 
 if os.environ.get("GEMINI_API_KEY"):
     check_chat(
@@ -170,10 +170,10 @@ if os.environ.get("GEMINI_API_KEY"):
         "gemini-3.5-flash-lite",
     )
 else:
-    record("FAIL", "Gemini call", "skipped — no GEMINI_API_KEY")
+    record("FAIL", "Gemini call", "skipped: no GEMINI_API_KEY")
 
 # %% [markdown]
-# ## 4. Local model — optional
+# ## 4. Local model (optional)
 #
 # Needs the Ollama application running and `ollama pull llama3.2:3b`.
 # Skip it if your laptop has less than 8 GB of memory: a `WARN` here is
@@ -197,7 +197,7 @@ warnings = [name for status, name, _ in results if status == "WARN"]
 
 print()
 if failures:
-    print("NOT READY — fix these before 9 November:")
+    print("NOT READY: fix these before the first exercise:")
     for name in failures:
         print(f"  - {name}")
     print("Help: see README.md in this folder, or send this output to the trainer.")

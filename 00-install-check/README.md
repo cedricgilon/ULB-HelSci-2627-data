@@ -1,15 +1,12 @@
 # Install check
 
-Run this at home, before 9 November. It takes about ten minutes on a
-home connection, most of it downloads. A laptop that ends on **READY**
-is ready for the module.
-
-## Why at home
+Run this first, as soon as you have the files. It takes about ten
+minutes, most of it downloads. A laptop that ends on **READY** is ready
+for the exercises.
 
 The module needs about 4 GB per laptop: Python packages, two small
-models and one local LLM. Fifteen laptops downloading that in the room
-at the same time will stop the wifi. This check starts every download,
-so after one green run nothing is left to fetch.
+models and one local LLM. This check starts every download, so after
+one green run nothing is left to fetch.
 
 ## Before you run it
 
@@ -65,7 +62,7 @@ Each line is one check:
 |---|---|
 | `OK` | works |
 | `WARN` | optional part missing: you can follow the module without it |
-| `FAIL` | required part missing: fix it before 9 November |
+| `FAIL` | required part missing: fix it before the first exercise |
 
 The last line says **READY** or lists what to fix.
 
@@ -75,11 +72,10 @@ The last line says **READY** or lists what to fix.
 |---|---|
 | `Python version` | install Python 3.11 to 3.14 with `uv python install 3.12` |
 | a package `FAIL` | run the `uv pip install` command again, in the same folder |
-| `.env file` | the file must be named `.env` exactly, with the dot, and sit next to `install_check.py` |
+| `.env file` | the file must be named `.env` exactly, with the dot, and sit in the main folder (the one with `requirements.txt`) |
 | `Groq call` with `401` | the key is wrong or incomplete: create a new one |
 | `Groq call` with `429` | too many calls in a short time: wait one minute, run again |
 | `Gemini call` with `429` | same as above |
 | `Ollama` | start the Ollama application, then run again |
 
-If a line stays red, send the full output to the trainer before
-9 November.
+If a line stays red, show the full output to the trainer.

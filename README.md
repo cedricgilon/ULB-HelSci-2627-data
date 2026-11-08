@@ -13,7 +13,7 @@ cd ULB-HelSci-2627-data
 
 Without git: on the GitHub page, **Code → Download ZIP**, then unzip.
 
-## Before the module
+## First: the install check
 
 Follow `00-install-check/README.md`: install the packages, create your two free API keys, put them in a file named `.env` in **this** folder, and run the check until it prints **READY**.
 
@@ -21,8 +21,9 @@ Follow `00-install-check/README.md`: install the packages, create your two free 
 
 | Folder | Content |
 |---|---|
-| `00-install-check/` | the install check: run it at home |
+| `00-install-check/` | the install check: run it first |
 | `notebooks/` | the exercises, one marimo notebook each (`ex1_tokens.py` … `ex7_project.py`), with `course.py` and `checks.py` |
+| `scripts/` | two Python scripts to run in the terminal: `ex2_call.py` (one model call, with a temperature) and `ex4_chatbot.py` (a chatbot on the medicine documents) |
 | `demos/` | the base-vs-chat demo and an optional tiny-GPT training notebook |
 | `slides/` | the slides of both days, PDF |
 | `data/` | the abstracts, the medicine documents, the training text: sources and licences in `data/README.md` |

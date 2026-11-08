@@ -5,8 +5,8 @@ autorisés dans l'UE (EMA). La même recherche et le même prompt que dans le no
 dans une boucle. Le modèle reçoit tout l'historique de la conversation à chaque question.
 
 Lancer, depuis le dossier du cours :
-    python notebooks/ex4_chatbot.py          # API (Groq)
-    python notebooks/ex4_chatbot.py local    # modèle local (Ollama)
+    python scripts/ex4_chatbot.py          # API (Groq)
+    python scripts/ex4_chatbot.py local    # modèle local (Ollama)
 Une ligne vide pour quitter.
 
 À essayer :
@@ -18,9 +18,11 @@ Une ligne vide pour quitter.
 4. What does Narvelia cost?
 """
 import sys
+from pathlib import Path
 
 from openai import APIConnectionError
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "notebooks"))  # pour trouver course.py
 from course import PROVIDERS, client, embed, full_index, similarity
 
 TOP_K = 3  # nombre de passages mis dans le prompt
