@@ -1,0 +1,151 @@
+[
+  {
+    "id": "Q01",
+    "question": "How often is Mounjaro injected?",
+    "answer": "Once a week, on the same day each week.",
+    "sources": [
+      "mounjaro"
+    ],
+    "in_corpus": true,
+    "evidence": "injected once a week"
+  },
+  {
+    "id": "Q02",
+    "question": "How should Wegovy tablets be taken?",
+    "answer": "Once a day on an empty stomach, after at least 8 hours of fasting; wait 30 minutes before eating, drinking or taking other medicines.",
+    "sources": [
+      "wegovy"
+    ],
+    "in_corpus": true,
+    "evidence": "taken once a day on an empty stomach"
+  },
+  {
+    "id": "Q03",
+    "question": "On what date did Dupixent receive its marketing authorisation in the EU?",
+    "answer": "27 September 2017.",
+    "sources": [
+      "dupixent"
+    ],
+    "in_corpus": true,
+    "evidence": "27 September 2017"
+  },
+  {
+    "id": "Q04",
+    "question": "When was Forxiga authorised in the EU?",
+    "answer": "11 November 2012.",
+    "sources": [
+      "forxiga"
+    ],
+    "in_corpus": true,
+    "evidence": "11 November 2012"
+  },
+  {
+    "id": "Q05",
+    "question": "What are the most common side effects of Keytruda given alone?",
+    "answer": "Tiredness, nausea and diarrhoea (more than 1 in 5 people).",
+    "sources": [
+      "keytruda"
+    ],
+    "in_corpus": true,
+    "evidence": "tiredness, nausea"
+  },
+  {
+    "id": "Q06",
+    "question": "From what age can Comirnaty be used?",
+    "answer": "From 6 months of age.",
+    "sources": [
+      "comirnaty"
+    ],
+    "in_corpus": true,
+    "evidence": "from the age of 6 months"
+  },
+  {
+    "id": "Q07",
+    "question": "In the Wegovy study with 611 people, how much weight did participants lose after 68 weeks?",
+    "answer": "16% of body weight on average with Wegovy, against 6% with placebo.",
+    "sources": [
+      "wegovy"
+    ],
+    "in_corpus": true,
+    "evidence": "16% of their body weight"
+  },
+  {
+    "id": "Q08",
+    "question": "In what forms is Xarelto available?",
+    "answer": "Tablets, and granules for making an oral suspension.",
+    "sources": [
+      "xarelto"
+    ],
+    "in_corpus": true,
+    "evidence": "granules for making an oral suspension"
+  },
+  {
+    "id": "Q09",
+    "question": "Which of these medicines are used to treat chronic kidney disease?",
+    "answer": "Forxiga and Jardiance.",
+    "sources": [
+      "forxiga",
+      "jardiance"
+    ],
+    "in_corpus": true,
+    "evidence": "chronic kidney disease"
+  },
+  {
+    "id": "Q10",
+    "question": "How much does Wegovy cost in Belgium?",
+    "answer": "Not in the documents.",
+    "sources": [],
+    "in_corpus": false,
+    "evidence": null
+  },
+  {
+    "id": "Q11",
+    "question": "What is the usual starting dose of metformin?",
+    "answer": "Not in the documents.",
+    "sources": [],
+    "in_corpus": false,
+    "evidence": null
+  },
+  {
+    "id": "Q12",
+    "question": "How often is tirzepatide injected?",
+    "answer": "Once a week (tirzepatide is the active substance of Mounjaro).",
+    "sources": [
+      "mounjaro"
+    ],
+    "in_corpus": true,
+    "evidence": "injected once a week",
+    "type": "synonym: the active substance instead of the brand name"
+  },
+  {
+    "id": "Q13",
+    "question": "What is the active substance of Keytruda, and what are its most common side effects when given alone?",
+    "answer": "Pembrolizumab; tiredness, nausea and diarrhoea.",
+    "sources": [
+      "keytruda"
+    ],
+    "in_corpus": true,
+    "evidence": "tiredness, nausea",
+    "type": "multi-part: two facts far apart in the document"
+  },
+  {
+    "id": "Q14",
+    "question": "How often is Narvelia taken?",
+    "answer": "Once a day, in the evening, with food.",
+    "sources": [
+      "narvelia"
+    ],
+    "in_corpus": true,
+    "evidence": "once a day in the evening",
+    "type": "fictional medicine: only the document can answer"
+  },
+  {
+    "id": "Q15",
+    "question": "How much does Narvelia cost?",
+    "answer": "Not in the documents (the overview says the price is not yet set).",
+    "sources": [],
+    "in_corpus": false,
+    "evidence": null,
+    "type": "fictional medicine, trap: the document mentions the price but gives none"
+  }
+]

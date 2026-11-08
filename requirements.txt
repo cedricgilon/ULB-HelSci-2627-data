@@ -1,0 +1,26 @@
+# Formation data - Introduction aux LLM (9-10 novembre)
+#
+# Créer l'environnement
+# > uv venv
+# Installation
+# > uv pip install -r requirements.txt
+#
+# Deux modules téléchargent des modèles à la première utilisation:
+# transformers -> distilgpt2 (~350 Mb) et sentence-transformers -> all-MiniLM-L6-v2 (~90 Mb)
+
+jupyter
+marimo
+pandas
+numpy
+scikit-learn
+matplotlib
+tiktoken
+transformers
+torch
+openai
+google-genai
+python-dotenv
+pydantic
+sentence-transformers
+pypdf
+ollama
