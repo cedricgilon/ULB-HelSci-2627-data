@@ -1,10 +1,8 @@
-# Introduction aux LLM: learner files
+# Introduction aux LLM
 
 HeLSci · Formation @data · 9–10 November 2026 · Brachet AW1.203
 
-Keep the folder structure as it is: the notebooks read their data from `../data/`.
-
-## Get the files
+## 1. Get the files
 
 ```sh
 git clone https://github.com/cedricgilon/ULB-HelSci-2627-data.git
@@ -13,11 +11,11 @@ cd ULB-HelSci-2627-data
 
 Without git: on the GitHub page, **Code → Download ZIP**, then unzip.
 
-## First: the install check
+## 2. Install check
 
 Follow `00-install-check/README.md`: install the packages, create your two free API keys, put them in a file named `.env` in **this** folder, and run the check until it prints **READY**.
 
-## What is inside
+## 3. What is inside
 
 | Folder | Content |
 |---|---|
@@ -28,18 +26,29 @@ Follow `00-install-check/README.md`: install the packages, create your two free 
 | `slides/` | the slides of both days, PDF |
 | `data/` | the abstracts, the medicine documents, the training text: sources and licences in `data/README.md` |
 
-## Open an exercise
+Note: keep the folder structure as it is: the notebooks read their data from `../data/`.
+
+## 4. Open an exercise
 
 In a terminal, in this folder:
 
+Mac or Linux
+
 ```sh
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+source .venv/bin/activate
+marimo edit notebooks/ex1_tokens.py
+```
+
+Windows
+
+```sh
+.venv\Scripts\activate
 marimo edit notebooks/ex1_tokens.py
 ```
 
 marimo does not run a notebook when it opens it: press **Run all** once (bottom right).
 
-## In an exercise
+### In an exercise
 
 - Change the data: a text box, a slider, a list
 - Write the one line marked `# TODO`; a hint is in the closed box below it
@@ -48,7 +57,7 @@ marimo does not run a notebook when it opens it: press **Run all** once (bottom 
 - Finished early? An option at the end of each notebook
 - Solutions are shared after the session
 
-## Rules
+### Confidentiality note
 
 - Never put your API keys in a notebook. They stay in `.env`
 - The exercises send text to Groq and Google. Use only the data given here, or public data. **No personal or confidential data**
