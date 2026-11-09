@@ -9,7 +9,7 @@ with app.setup(hide_code=True):
     import marimo as mo
 
     import checks
-    from course import DATA, OUTPUT, ask, read_csv
+    from course import DATA, OUTPUT, PROVIDERS, client, read_csv
 
 
 @app.cell(hide_code=True)
@@ -50,7 +50,7 @@ def _():
     mo.md(r"""
     ## 1 · Read and name
 
-    > **The idea:** before you measure, read the errors and give them a name (slide "Lire les erreurs, comme pour MNIST")
+    > **The idea:** before you measure, read the errors and give them a name (slide "Read the errors, as for MNIST")
 
     The rows where an exact field is wrong. The `note` of the ground truth gives the reason.
     """)
@@ -99,7 +99,7 @@ def _():
 
     ## 2 · Count, then measure
 
-    > **The idea:** accuracy says how many errors, the failure types say what to fix (slide "Que mesurer ?")
+    > **The idea:** accuracy says how many errors, the failure types say what to fix (slide "What to measure?")
     """)
     return
 
@@ -143,7 +143,7 @@ def _():
     mo.md(r"""
     ## 3 · A judge for one failure type
 
-    > **The idea:** an LLM judge is a classifier. Check that it agrees with you before you trust it (slide "Le juge est un classifieur : testez-le")
+    > **The idea:** an LLM judge is a classifier. Check that it agrees with you before you trust it (slide "The judge is a classifier: test it")
 
     The field `main_result` is free text: a program cannot compare it word by word. A second model (Gemini) judges it.
 
@@ -169,7 +169,7 @@ def _(sample):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    **Change one line of the rubric**, then press the button. Target: a judge that agrees with you.
+    **Change one line of the rubric**, then press the button. Target: a judge that agrees with you. **Read the judge cell**: the judge is one more call, with your rubric in the message.
     """)
     return
 
@@ -186,13 +186,24 @@ Give your reason in one sentence first. Then, on the last line, write only PASS 
     return judge_now, rubric
 
 
-@app.cell(hide_code=True)
-def _(extracted, judge_now, my_label, rubric, sample, truth):
+@app.cell
+def _(extracted, judge_now, rubric, sample, truth):
     mo.stop(not judge_now.value, mo.md("Press **Ask the judge**."))
     verdicts = {}
     for item_id in sample:
-        reply, _ = ask(f"{rubric.value}\n\nGround truth: {truth[item_id]['main_result']}\nExtracted: {extracted[item_id].get('main_result', '')}", "judge", temperature=0)
-        verdicts[item_id] = reply.strip().splitlines()[-1].strip().upper().startswith("PASS")
+        message = f"{rubric.value}\n\nGround truth: {truth[item_id]['main_result']}\nExtracted: {extracted[item_id].get('main_result', '')}"
+        response = client("judge").chat.completions.create(
+            model=PROVIDERS["judge"]["model"],  # Gemini, a second model
+            messages=[{"role": "user", "content": message}],
+            temperature=0,
+        )
+        last_line = (response.choices[0].message.content or "").strip().splitlines()[-1]
+        verdicts[item_id] = last_line.strip().upper().startswith("PASS")  # True = PASS
+    return (verdicts,)
+
+
+@app.cell(hide_code=True)
+def _(my_label, sample, verdicts):
     failures = [item_id for item_id in sample if not my_label.value[item_id]]
     good = [item_id for item_id in sample if my_label.value[item_id]]
     mo.vstack([

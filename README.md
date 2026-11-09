@@ -82,11 +82,10 @@ In Jupyter, run the cells one by one, from the top: **Shift+Enter**. After you c
 ### In an exercise
 
 - Change the data: a text box, a slider, a list (in Jupyter: a variable in a cell)
-- Write the line marked `# TODO`. A hint is in the closed box below it
-- After each part, a check shows ✅ right, ⏳ still to do, or ❌ not yet, with a hint
+- No code to write: read the code cells, they show the calls to the model
+- After some parts, a check shows ✅ right, ⏳ still to do, or ❌ not yet, with a hint
 - The model is called only when you click its ▶ button (in Jupyter: when you run its cell)
 - Finished early? There is an option at the end of each notebook
-- The solutions are shared after the session
 
 ## 5. Run a script
 

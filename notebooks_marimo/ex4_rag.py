@@ -7,7 +7,7 @@ with app.setup(hide_code=True):
     import marimo as mo
 
     import checks
-    from course import ask, embed, rag_index, similarity, test_questions
+    from course import PROVIDERS, client, embed, rag_index, similarity, test_questions
 
 
 @app.cell(hide_code=True)
@@ -80,32 +80,19 @@ def _(question):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    **Write one line**: the similarity between `question.value` and `sentence.value`. `similarity(a, b)` compares two vectors.
+    **Read the line**: `embed` turns each text into a vector, `similarity` compares the two vectors.
     """)
     return
 
 
 @app.cell
 def _(question, sentence):
-    score = ...  # TODO
+    score = similarity(embed(question.value), embed(sentence.value))
     return (score,)
 
 
 @app.cell(hide_code=True)
-def _(question, score, sentence):
-    checks.ex4_score(score, question.value, sentence.value)
-    return
-
-
-@app.cell(hide_code=True)
-def _():
-    mo.accordion({"💡 Hint": mo.md("`similarity` takes two vectors: `embed(...)` for each text.")})
-    return
-
-
-@app.cell(hide_code=True)
 def _(score):
-    mo.stop(score is ..., mo.md("First write the line above."))
     mo.md(f"""
     **Score: {score:.2f}.** 1: the same meaning. 0: no relation.
 
@@ -123,8 +110,7 @@ def _():
 
 
 @app.cell(hide_code=True)
-def _(chunks, question, score, vectors):
-    mo.stop(score is ..., mo.md("First write the line above."))
+def _(chunks, question, vectors):
     question_vector = embed(question.value)
     scores = [similarity(question_vector, vector) for vector in vectors]
     best = sorted(range(len(chunks)), key=lambda index: scores[index], reverse=True)[:3]
@@ -173,19 +159,44 @@ def _(instructions):
 
 
 @app.cell(hide_code=True)
+def _():
+    mo.md(r"""
+    **Read the two cells below**: the program builds the prompt, then sends it. `client("api")` is the client of exercise 2, with the Groq address and key.
+    """)
+    return
+
+
+@app.cell
 def _(best, chunks, instructions, question):
+    # the 3 best passages, each with its id
     context = "\n\n".join(f"[{chunks[index]['id']}]\n{chunks[index]['text']}" for index in best)
+    # your instructions, the passages between tags, the question
     prompt = f"{instructions.value}\n\n<passages>\n{context}\n</passages>\n\nQuestion: {question.value}"
-    ask_model = mo.ui.run_button(label="Ask the model")
-    mo.vstack([mo.accordion({"The prompt sent to the model": mo.md(f"```\n{prompt}\n```")}), ask_model])
-    return ask_model, prompt
+    return (prompt,)
 
 
 @app.cell(hide_code=True)
+def _(prompt):
+    ask_model = mo.ui.run_button(label="Ask the model")
+    mo.vstack([mo.accordion({"The prompt sent to the model": mo.md(f"```\n{prompt}\n```")}), ask_model])
+    return (ask_model,)
+
+
+@app.cell
 def _(ask_model, prompt):
     mo.stop(not ask_model.value, mo.md("Press **Ask the model**."))
-    answer, seconds = ask(prompt, "api", temperature=0)
-    mo.md(f"{answer}\n\n*{seconds:.1f} s, Groq*")
+    response = client("api").chat.completions.create(
+        model=PROVIDERS["api"]["model"],  # openai/gpt-oss-20b
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0,
+    )
+    answer = response.choices[0].message.content
+    return answer, response
+
+
+@app.cell(hide_code=True)
+def _(answer, response):
+    mo.md(f"{answer}\n\n*{response.usage.prompt_tokens} tokens in, {response.usage.completion_tokens} tokens out*")
     return
 
 

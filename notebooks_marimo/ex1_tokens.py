@@ -92,7 +92,7 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    **Write one line**: the function gives the number of tokens in a text. `encoding` is the tokenizer: `o200k` or `gpt2`.
+    **Read the function**: `encode` cuts the text into token ids, `len` counts them. `encoding` is the tokenizer: `o200k` or `gpt2`.
     """)
     return
 
@@ -100,19 +100,7 @@ def _():
 @app.function
 def count_tokens(encoding, text):
     """The number of tokens in text."""
-    ...  # TODO
-
-
-@app.cell(hide_code=True)
-def _():
-    checks.ex1_count(count_tokens)
-    return
-
-
-@app.cell(hide_code=True)
-def _():
-    mo.accordion({"💡 Hint": mo.md("`len(a_list)` gives the number of items in a list.")})
-    return
+    return len(encoding.encode(text))
 
 
 @app.cell(hide_code=True)

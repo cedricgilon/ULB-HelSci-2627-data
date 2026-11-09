@@ -11,7 +11,7 @@ with app.setup(hide_code=True):
     from pydantic import BaseModel, ValidationError
 
     import checks
-    from course import OUTPUT, abstracts, ask_json, write_csv
+    from course import OUTPUT, PROVIDERS, abstracts, ask_json, client, write_csv
 
 
 @app.cell(hide_code=True)
@@ -36,7 +36,7 @@ def _():
     mo.md(r"""
     ## 1 · One abstract
 
-    > **The idea:** a program needs fixed fields, not sentences, so we ask for JSON (slide "Un programme lit des champs, pas des phrases")
+    > **The idea:** a program needs fixed fields, not sentences, so we ask for JSON (slide "A program reads fields, not sentences")
 
     **Complete the prompt**: one field of the list is missing. Use the allowed values below.
     """)
@@ -83,11 +83,33 @@ def _():
 
 
 @app.cell(hide_code=True)
+def _():
+    mo.md(r"""
+    **Read the call below**: a system message, your fields and the abstract between tags, and `response_format` for JSON mode.
+    """)
+    return
+
+
+@app.cell
 def _(abstract_id, corpus, extract_one, fields):
     mo.stop(not extract_one.value, mo.md("Press **Extract**."))
-    raw, seconds = ask_json("You extract structured data from abstracts of clinical studies.", f"{fields.value}\n\n<abstract>\n{corpus[abstract_id.value]}\n</abstract>")
-    mo.vstack([mo.md(f"*{seconds:.1f} s*"), mo.json(json.loads(raw))])
+    response = client("api").chat.completions.create(
+        model=PROVIDERS["api"]["model"],  # openai/gpt-oss-20b
+        messages=[
+            {"role": "system", "content": "You extract structured data from abstracts of clinical studies."},
+            {"role": "user", "content": f"{fields.value}\n\n<abstract>\n{corpus[abstract_id.value]}\n</abstract>"},
+        ],
+        temperature=0,
+        response_format={"type": "json_object"},  # JSON mode: the answer is valid JSON
+    )
+    raw = response.choices[0].message.content
     return (raw,)
+
+
+@app.cell(hide_code=True)
+def _(raw):
+    mo.json(json.loads(raw))
+    return
 
 
 @app.cell(hide_code=True)
@@ -108,9 +130,9 @@ def _():
     mo.md(r"""
     ## 2 · Check with pydantic
 
-    > **The idea:** valid JSON can hold a value of the wrong type. A pydantic schema rejects it (slide "`pydantic` : un formulaire avec des champs typés")
+    > **The idea:** valid JSON can hold a value of the wrong type. A pydantic schema rejects it (slide "`pydantic`: a form with typed fields")
 
-    **Write one line**: the field `sample_size`, an integer.
+    **Read the schema**: each field has a name and a type. `sample_size` must be an integer (`int`).
     """)
     return
 
@@ -120,17 +142,11 @@ def _():
     class Extraction(BaseModel):
         population: str
         intervention: str
-        ...  # TODO
+        sample_size: int
         study_design: Literal["randomised controlled trial", "cluster randomised trial", "crossover trial", "secondary analysis of a trial", "cross-sectional study"]
         effect_found: Literal["yes", "no", "mixed", "not applicable"]
         main_result: str
     return (Extraction,)
-
-
-@app.cell(hide_code=True)
-def _(Extraction):
-    checks.ex5_model(Extraction)
-    return
 
 
 @app.cell(hide_code=True)
@@ -163,7 +179,7 @@ def _():
     mo.md(r"""
     ## 3 · The 20 abstracts
 
-    > **The idea:** the check finds badly formed answers, not wrong values (slide "JSON valide, valeur fausse")
+    > **The idea:** the check finds badly formed answers, not wrong values (slide "Valid JSON, wrong value")
 
     20 calls, one after the other. The free tier allows 8,000 tokens per minute, so some calls wait and try again (HTTP 429). This takes about 2 minutes.
     """)

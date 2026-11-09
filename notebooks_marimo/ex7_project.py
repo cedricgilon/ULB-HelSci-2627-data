@@ -6,8 +6,7 @@ app = marimo.App(width="medium", app_title="Exercise 7: small project")
 with app.setup(hide_code=True):
     import marimo as mo
 
-    import checks
-    from course import ask
+    from course import PROVIDERS, client
 
 
 @app.cell(hide_code=True)
@@ -16,13 +15,13 @@ def _():
     # Exercise 7: small project
 
 
-    A task from your field: start from your one-line idea of yesterday.
+    A task from your field: start from your one-line idea of yesterday. No code to write.
 
-    1. The task and 5 examples
-    2. The prompt, run on the 5 examples
+    1. The prompt and 5 examples
+    2. Run on the 5 examples
     3. Check by hand, and three lines to present
 
-    No personal data in the examples.
+    No personal data in the examples. Option: run on the local model and compare.
     """)
     return
 
@@ -30,11 +29,11 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 1 · The task and 5 examples
+    ## 1 · The prompt and 5 examples
 
-    > **The idea:** start small: a clear task, and a few examples where you know the answer (slide "La méthode, toujours la même")
+    > **The idea:** start small: a clear task, and a few examples where you know the answer (slide "The method, always the same")
 
-    **Change the task and the examples.** Some ideas, all with no personal data:
+    **Change the prompt and the examples**, one example per line. Some ideas, all with no personal data:
 
     - the triage level of a fictional case (HELPMed: 10 cases written by doctors)
     - a plain-language summary of an EMA document (`data/rag/`)
@@ -47,42 +46,36 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    task = mo.ui.text_area(value="Say whether a sentence reports an adverse event: yes or no.", full_width=True)
-    task
-    return (task,)
-
-
-@app.cell
-def _():
-    examples = [
-        "After the second dose, the patient developed a rash on both arms.",
-        "The patient took the tablets with breakfast, as advised.",
-        "She reported dizziness two hours after the injection.",
-        "The study enrolled 120 adults with type 2 diabetes.",
-        "Three participants stopped treatment because of nausea.",
-    ]
-    return (examples,)
+    prompt = mo.ui.text_area(
+        value="Say whether a sentence reports an adverse event: yes or no.\nAnswer with one word.",
+        label="`prompt`",
+        full_width=True,
+        rows=3,
+    )
+    examples = mo.ui.text_area(
+        value="\n".join([
+            "After the second dose, the patient developed a rash on both arms.",
+            "The patient took the tablets with breakfast, as advised.",
+            "She reported dizziness two hours after the injection.",
+            "The study enrolled 120 adults with type 2 diabetes.",
+            "Three participants stopped treatment because of nausea.",
+        ]),
+        label="`examples`, one per line",
+        full_width=True,
+        rows=6,
+    )
+    mo.vstack([prompt, examples])
+    return examples, prompt
 
 
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 2 · The prompt
+    ## 2 · Run on the 5 examples
 
     > **The idea:** the instructions on one side, the data between tags on the other (slide "Data and messages")
 
-    **Write one line**: the message for one example, the prompt first, then the example between `<input>` tags.
-    With `make_message("Say yes or no.", "She felt dizzy.")`, the message must be:
-
-    ```
-    Say yes or no.
-
-    <input>
-    She felt dizzy.
-    </input>
-    ```
-
-    An f-string puts a variable in a text: `f"Hello {name}"`. `\n` is a new line.
+    The notebook sends one message per example: your prompt first, then the example between `<input>` tags. **Read the two code cells** (no change needed), look at the message for your first example, then press **Run on the examples**.
     """)
     return
 
@@ -91,30 +84,44 @@ def _():
 def _():
     def make_message(prompt, example):
         """The prompt, then the example between <input> tags."""
-        ...  # TODO
+        return f"{prompt}\n\n<input>\n{example}\n</input>"
     return (make_message,)
 
 
 @app.cell(hide_code=True)
-def _(make_message):
-    checks.ex7_message(make_message)
-    return
+def _(examples, make_message, prompt):
+    example_list = [line.strip() for line in examples.value.splitlines() if line.strip()]
+    mo.stop(not example_list, mo.md("Write at least one example, one per line."))
+    mo.md(f"```\n{make_message(prompt.value, example_list[0])}\n```")
+    return (example_list,)
 
 
 @app.cell(hide_code=True)
-def _(task):
-    prompt = mo.ui.text_area(value=f"{task.value}\nAnswer with one word.", full_width=True, rows=5)
-    run_all = mo.ui.run_button(label="Run on the 5 examples")
-    mo.vstack([prompt, run_all])
-    return prompt, run_all
+def _():
+    where = mo.ui.dropdown(["api", "local"], value="api", label="`where`")
+    run_all = mo.ui.run_button(label="Run on the examples")
+    mo.hstack([where, run_all], justify="start")
+    return run_all, where
 
 
-@app.cell(hide_code=True)
-def _(examples, make_message, prompt, run_all):
-    mo.stop(not run_all.value, mo.md("Press **Run on the 5 examples**."))
-    outputs = [ask(make_message(prompt.value, example), "api", temperature=0)[0] for example in examples]
-    mo.ui.table([{"example": example, "answer": output} for example, output in zip(examples, outputs)], selection=None)
+@app.cell
+def _(example_list, make_message, prompt, run_all, where):
+    mo.stop(not run_all.value, mo.md("Press **Run on the examples**."))
+    outputs = []
+    for example in example_list:
+        response = client(where.value).chat.completions.create(
+            model=PROVIDERS[where.value]["model"],
+            messages=[{"role": "user", "content": make_message(prompt.value, example)}],
+            temperature=0,
+        )
+        outputs.append(response.choices[0].message.content)
     return (outputs,)
+
+
+@app.cell(hide_code=True)
+def _(example_list, outputs):
+    mo.ui.table([{"example": example, "answer": output} for example, output in zip(example_list, outputs)], selection=None)
+    return
 
 
 @app.cell(hide_code=True)
@@ -122,7 +129,7 @@ def _():
     mo.md(r"""
     ## 3 · Check by hand, then three lines
 
-    > **The idea:** measure before you trust, then say what the tool does, its risk and how you measure it (slide "Trois lignes à présenter")
+    > **The idea:** measure before you trust, then say what the tool does, its risk and how you measure it (slide "Three lines to present")
 
     **Tick each right answer.**
     """)
@@ -154,6 +161,16 @@ def _():
 @app.cell(hide_code=True)
 def _(measure, risk, what):
     mo.md(f"**What it does**: {what.value}\n\n**Risk if it is wrong**: {risk.value}\n\n**How we measure it**: {measure.value}")
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    mo.md(r"""
+    ## Option: the local model
+
+    Set `where` to `local`, press **Run on the examples** again, and tick again. Does the small local model get the same score?
+    """)
     return
 
 

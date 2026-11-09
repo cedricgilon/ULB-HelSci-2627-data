@@ -4,9 +4,16 @@ __generated_with = "0.25.2"
 app = marimo.App(width="medium", app_title="Exercise 2: local vs API, temperature")
 
 with app.setup(hide_code=True):
+    import os
+    import time
+
     import marimo as mo
+    from dotenv import find_dotenv, load_dotenv
+    from openai import OpenAI
 
     from course import ask, normalise
+
+    load_dotenv(find_dotenv(usecwd=True))  # puts the keys of the .env file in os.environ
 
 
 @app.cell(hide_code=True)
@@ -50,7 +57,7 @@ def _():
 
     > **The idea:** the same kind of model runs on your laptop or at a provider. The response time changes, and so does the place where your data goes
 
-    **Choose** where the model runs, then press the button. Ask the question once with each.
+    Below: the full call, twice. **Read the two cells**: what changes between the local model and the API? Then press the two buttons.
     The local model can take 30 to 60 s on a laptop with no GPU.
     """)
     return
@@ -59,27 +66,67 @@ def _():
 @app.cell(hide_code=True)
 def _():
     prompt = mo.ui.text_area(
-        value="What is the most common side effect of metformin? Answer in two words.", full_width=True
+        value="What is the most common side effect of metformin? Answer in two words.", label="`prompt`", full_width=True
     )
-    where = mo.ui.dropdown({"local (Ollama, llama3.2:3b)": "local", "API (Groq, gpt-oss-20b)": "api"}, value="local (Ollama, llama3.2:3b)")
-    ask_once = mo.ui.run_button(label="Ask the model")
-    mo.vstack([prompt, mo.hstack([where, ask_once], justify="start")])
-    return ask_once, prompt, where
+    ask_local = mo.ui.run_button(label="Ask the local model")
+    ask_api = mo.ui.run_button(label="Ask the API")
+    mo.vstack([prompt, mo.hstack([ask_local, ask_api], justify="start")])
+    return ask_api, ask_local, prompt
+
+
+@app.cell
+def _(ask_local, prompt):
+    mo.stop(not ask_local.value, mo.md("Press **Ask the local model**."))
+    local = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")  # Ollama, on your laptop
+    local_start = time.perf_counter()
+    local_response = local.chat.completions.create(
+        model="llama3.2:3b",
+        messages=[{"role": "user", "content": prompt.value}],
+        temperature=0,
+    )
+    local_seconds = time.perf_counter() - local_start
+    return local_response, local_seconds
 
 
 @app.cell(hide_code=True)
-def _(ask_once, prompt, where):
-    mo.stop(not ask_once.value, mo.md("Press **Ask the model**."))
-    answer, seconds = ask(prompt.value, where.value, temperature=0)
-    mo.md(f"**{seconds:.1f} s** · {answer}")
+def _(local_response, local_seconds):
+    mo.vstack([
+        mo.md(f"**Local, {local_seconds:.1f} s** · {local_response.choices[0].message.content}"),
+        mo.accordion({"The full response": mo.json(local_response.model_dump())}),
+    ])
+    return
+
+
+@app.cell
+def _(ask_api, prompt):
+    mo.stop(not ask_api.value, mo.md("Press **Ask the API**."))
+    api = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=os.environ["GROQ_API_KEY"])  # Groq: the text goes to a provider's server
+    api_start = time.perf_counter()
+    api_response = api.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        messages=[{"role": "user", "content": prompt.value}],
+        temperature=0,
+    )
+    api_seconds = time.perf_counter() - api_start
+    return api_response, api_seconds
+
+
+@app.cell(hide_code=True)
+def _(api_response, api_seconds):
+    mo.vstack([
+        mo.md(f"**API, {api_seconds:.1f} s** · {api_response.choices[0].message.content}"),
+        mo.accordion({"The full response": mo.json(api_response.model_dump())}),
+    ])
     return
 
 
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
+    - The same code: only the address (`base_url`), the key and the model name change
     - Local: slower with no GPU, the text stays on your laptop
     - API: fast, the text goes to the provider
+    - In "The full response": `usage` gives the tokens in and out, `finish_reason` why the answer stopped
 
     /// details | Question
     You work with patient notes. Which one do you choose, and why?
@@ -97,23 +144,7 @@ def _():
 
     The same question, 5 times, on the API. How many **different** answers?
 
-    **Predict first**, before you press the button.
-    """)
-    return
-
-
-@app.cell(hide_code=True)
-def _():
-    guess_low = mo.ui.number(start=1, stop=5, value=1, label="different answers at temperature 0")
-    guess_high = mo.ui.number(start=1, stop=5, value=1, label="different answers at temperature 1.5")
-    mo.vstack([guess_low, guess_high])
-    return guess_high, guess_low
-
-
-@app.cell(hide_code=True)
-def _():
-    mo.md(r"""
-    **Change** the temperature, then press the button. Target: check your two predictions, then find a temperature where the 5 answers are all different.
+    **Change** the temperature, then press the button. Target: press once at 0, then find a temperature where the 5 answers are all different.
     """)
     return
 
@@ -127,13 +158,12 @@ def _():
 
 
 @app.cell(hide_code=True)
-def _(ask_five, guess_high, guess_low, prompt, temperature):
+def _(ask_five, prompt, temperature):
     mo.stop(not ask_five.value, mo.md("Press **Ask 5 times**."))
     answers = [ask(prompt.value, "api", temperature.value)[0] for _ in range(5)]
     different = len({normalise(answer) for answer in answers})
     mo.vstack([
-        mo.md(f"**{different} different answer(s)** at temperature {temperature.value}. "
-              f"Your predictions: {guess_low.value} at 0, {guess_high.value} at 1.5"),
+        mo.md(f"**{different} different answer(s)** at temperature {temperature.value}"),
         mo.ui.table([{"answer": answer} for answer in answers], selection=None),
     ])
     return
