@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.25.2"
-app = marimo.App(width="medium", app_title="Exercice 7 : petit projet")
+app = marimo.App(width="medium", app_title="Exercise 7: small project")
 
 with app.setup(hide_code=True):
     import marimo as mo
@@ -13,16 +13,16 @@ with app.setup(hide_code=True):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    # Exercice 7 : petit projet
+    # Exercise 7: small project
 
 
-    Une tâche de votre domaine : partez de l'idée en une ligne d'hier.
+    A task from your field: start from your one-line idea of yesterday.
 
-    1. La tâche et 5 exemples
-    2. Le prompt, lancé sur les 5 exemples
-    3. Vérifier à la main, et trois lignes à présenter
+    1. The task and 5 examples
+    2. The prompt, run on the 5 examples
+    3. Check by hand, and three lines to present
 
-    Pas de données personnelles dans les exemples.
+    No personal data in the examples.
     """)
     return
 
@@ -30,17 +30,17 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 1 · La tâche et 5 exemples
+    ## 1 · The task and 5 examples
 
-    > **L'idée :** commencer petit : une tâche claire, et quelques exemples dont vous connaissez la réponse (slide "La méthode, toujours la même")
+    > **The idea:** start small: a clear task, and a few examples where you know the answer (slide "La méthode, toujours la même")
 
-    **Changez la tâche et les exemples.** Des idées, avec des données sans données personnelles :
+    **Change the task and the examples.** Some ideas, all with no personal data:
 
-    - le niveau de triage d'un cas fictif (HELPMed : 10 cas écrits par des médecins)
-    - un résumé en langage simple d'un document de l'EMA (`data/rag/`)
-    - un tableau à partir de résumés (exercice 5)
-    - des vignettes pédagogiques, chaque fait vérifié par une personne
-    - une fiche de contexte d'usage pour un outil d'IA en pharma (EMA–FDA, 10 principes)
+    - the triage level of a fictional case (HELPMed: 10 cases written by doctors)
+    - a plain-language summary of an EMA document (`data/rag/`)
+    - a table from abstracts (exercise 5)
+    - teaching vignettes, each fact checked by a person
+    - a context-of-use sheet for an AI tool in pharma (EMA–FDA, 10 principles)
     """)
     return
 
@@ -67,12 +67,12 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 2 · Le prompt
+    ## 2 · The prompt
 
-    > **L'idée :** les instructions d'un côté, les données entre balises de l'autre (slide "Données et messages")
+    > **The idea:** the instructions on one side, the data between tags on the other (slide "Data and messages")
 
-    **Écrivez une ligne** : le message pour un exemple, le prompt d'abord, puis l'exemple entre balises `<input>`.
-    Avec `make_message("Say yes or no.", "She felt dizzy.")`, le message doit être :
+    **Write one line**: the message for one example, the prompt first, then the example between `<input>` tags.
+    With `make_message("Say yes or no.", "She felt dizzy.")`, the message must be:
 
     ```
     Say yes or no.
@@ -82,7 +82,7 @@ def _():
     </input>
     ```
 
-    Une f-string met une variable dans un texte : `f"Bonjour {name}"`. `\n` est un retour à la ligne.
+    An f-string puts a variable in a text: `f"Hello {name}"`. `\n` is a new line.
     """)
     return
 
@@ -90,7 +90,7 @@ def _():
 @app.cell
 def _():
     def make_message(prompt, example):
-        """Le prompt, puis l'exemple entre balises <input>."""
+        """The prompt, then the example between <input> tags."""
         ...  # TODO
     return (make_message,)
 
@@ -104,56 +104,56 @@ def _(make_message):
 @app.cell(hide_code=True)
 def _(task):
     prompt = mo.ui.text_area(value=f"{task.value}\nAnswer with one word.", full_width=True, rows=5)
-    run_all = mo.ui.run_button(label="Lancer sur les 5 exemples")
+    run_all = mo.ui.run_button(label="Run on the 5 examples")
     mo.vstack([prompt, run_all])
     return prompt, run_all
 
 
 @app.cell(hide_code=True)
 def _(examples, make_message, prompt, run_all):
-    mo.stop(not run_all.value, mo.md("Appuyez sur **Lancer sur les 5 exemples**."))
+    mo.stop(not run_all.value, mo.md("Press **Run on the 5 examples**."))
     outputs = [ask(make_message(prompt.value, example), "api", temperature=0)[0] for example in examples]
-    mo.ui.table([{"exemple": example, "réponse": output} for example, output in zip(examples, outputs)], selection=None)
+    mo.ui.table([{"example": example, "answer": output} for example, output in zip(examples, outputs)], selection=None)
     return (outputs,)
 
 
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 3 · Vérifier à la main, puis trois lignes
+    ## 3 · Check by hand, then three lines
 
-    > **L'idée :** mesurer avant de faire confiance, puis dire ce que fait l'outil, son risque et sa mesure (slide "Trois lignes à présenter")
+    > **The idea:** measure before you trust, then say what the tool does, its risk and how you measure it (slide "Trois lignes à présenter")
 
-    **Cochez chaque réponse juste.**
+    **Tick each right answer.**
     """)
     return
 
 
 @app.cell(hide_code=True)
 def _(outputs):
-    right = mo.ui.dictionary({f"exemple {number + 1}": mo.ui.checkbox(label="juste") for number in range(len(outputs))})
+    right = mo.ui.dictionary({f"example {number + 1}": mo.ui.checkbox(label="right") for number in range(len(outputs))})
     right
     return (right,)
 
 
 @app.cell(hide_code=True)
 def _(right):
-    mo.md(f"**{sum(right.value.values())} / {len(right.value)} justes**")
+    mo.md(f"**{sum(right.value.values())} / {len(right.value)} right**")
     return
 
 
 @app.cell(hide_code=True)
 def _():
-    what = mo.ui.text_area(placeholder="Ce que cela fait", full_width=True)
-    risk = mo.ui.text_area(placeholder="Le risque si c'est faux", full_width=True)
-    measure = mo.ui.text_area(placeholder="Comment vous le mesurez", full_width=True)
+    what = mo.ui.text_area(placeholder="What it does", full_width=True)
+    risk = mo.ui.text_area(placeholder="The risk if it is wrong", full_width=True)
+    measure = mo.ui.text_area(placeholder="How you measure it", full_width=True)
     mo.vstack([what, risk, measure])
     return measure, risk, what
 
 
 @app.cell(hide_code=True)
 def _(measure, risk, what):
-    mo.md(f"**Ce que cela fait** : {what.value}\n\n**Risque si c'est faux** : {risk.value}\n\n**Comment nous le mesurons** : {measure.value}")
+    mo.md(f"**What it does**: {what.value}\n\n**Risk if it is wrong**: {risk.value}\n\n**How we measure it**: {measure.value}")
     return
 
 
