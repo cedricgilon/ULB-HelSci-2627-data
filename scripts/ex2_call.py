@@ -17,7 +17,7 @@ from pathlib import Path
 
 from openai import APIConnectionError
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "notebooks"))  # to find course.py
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "notebooks_marimo"))  # to find course.py
 from course import PROVIDERS, client, normalise
 
 PROMPT = "What is the most common side effect of metformin? Answer in two words."

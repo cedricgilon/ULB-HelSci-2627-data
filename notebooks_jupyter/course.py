@@ -209,11 +209,12 @@ def read_csv(path):
 
 
 def write_csv(path, rows):
-    """Write a list of dicts to a CSV file."""
+    """Write a list of dicts to a CSV file. A row without a column gets an empty cell."""
     import csv
 
     path.parent.mkdir(parents=True, exist_ok=True)
+    columns = list(dict.fromkeys(key for row in rows for key in row))  # every column, in order of first use
     with open(path, "w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=columns)
         writer.writeheader()
         writer.writerows(rows)

@@ -1,7 +1,8 @@
 """Automatic checks of the exercise notebooks.
 
 A check says if an answer is right. It never shows the answer.
-Each check returns a marimo callout: ⏳ to do, ✅ right, ❌ not yet.
+Each check returns ⏳ to do, ✅ right, ❌ not yet: a marimo callout in
+marimo, Markdown in Jupyter. notebooks_jupyter/checks.py links to this file.
 """
 import marimo as mo
 import tiktoken
@@ -10,10 +11,19 @@ import tiktoken
 def _status(result, label, hint=""):
     """A callout for a check. result is True, False, or None while the TODO is open."""
     if result is None:
-        return mo.callout(mo.md(f"⏳ {label}"), kind="neutral")
+        return _callout(f"⏳ {label}", "neutral")
     if result:
-        return mo.callout(mo.md(f"✅ {label}"), kind="success")
-    return mo.callout(mo.md(f"❌ {label}. {hint}"), kind="warn")
+        return _callout(f"✅ {label}", "success")
+    return _callout(f"❌ {label}. {hint}", "warn")
+
+
+def _callout(text, kind):
+    """A marimo callout in marimo, Markdown in Jupyter."""
+    if mo.running_in_notebook():
+        return mo.callout(mo.md(text), kind=kind)
+    from IPython.display import Markdown
+
+    return Markdown(text)
 
 
 def _run(test, label, hint):

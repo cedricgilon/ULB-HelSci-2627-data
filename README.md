@@ -50,7 +50,8 @@ Optional, the local model: install Ollama (<https://ollama.com>), then `ollama p
 | Folder | Contents |
 |---|---|
 | `00-install-check/` | the install check |
-| `notebooks/` | the exercises, one marimo notebook each (`ex1_tokens.py` … `ex7_project.py`), with `course.py` and `checks.py` |
+| `notebooks_marimo/` | the exercises, one marimo notebook each (`ex1_tokens.py` … `ex7_project.py`), with `course.py` and `checks.py` |
+| `notebooks_jupyter/` | the same exercises as Jupyter notebooks (`ex1_tokens.ipynb` … `ex7_project.ipynb`) |
 | `scripts/` | two Python scripts to run in the terminal: `ex2_call.py` (one call to the model, with a temperature) and `ex4_chatbot.py` (a chatbot on the medicine documents) |
 | `demos/` | the base model vs chat model demo, and an optional notebook to train a mini-GPT |
 | `slides/` | the slides of the two days, as PDF |
@@ -60,18 +61,30 @@ Keep the folder structure as it is: the notebooks read their data from `../data/
 
 ## 4. Open an exercise
 
+Each exercise is in two forms, with the same content: marimo or Jupyter. Choose one.
+
+marimo (recommended: a cell runs again when you change a value above it):
+
 ```sh
-uv run marimo edit notebooks/ex1_tokens.py
+uv run marimo edit notebooks_marimo/ex1_tokens.py
 ```
 
 marimo does not run a notebook when it opens: click **Run all** once (bottom right).
 
+Jupyter (if you already know it):
+
+```sh
+uv run jupyter lab notebooks_jupyter/ex1_tokens.ipynb
+```
+
+In Jupyter, run the cells one by one, from the top: **Shift+Enter**. After you change a cell, run it again, then the cells below it. In VS Code, open the `.ipynb` file and select the `.venv` kernel.
+
 ### In an exercise
 
-- Change the data: a text box, a slider, a list
+- Change the data: a text box, a slider, a list (in Jupyter: a variable in a cell)
 - Write the line marked `# TODO`. A hint is in the closed box below it
 - After each part, a check shows ✅ right, ⏳ still to do, or ❌ not yet, with a hint
-- The model is called only when you click its ▶ button
+- The model is called only when you click its ▶ button (in Jupyter: when you run its cell)
 - Finished early? There is an option at the end of each notebook
 - The solutions are shared after the session
 

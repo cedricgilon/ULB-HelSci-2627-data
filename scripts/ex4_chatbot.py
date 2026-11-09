@@ -22,7 +22,7 @@ from pathlib import Path
 
 from openai import APIConnectionError
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "notebooks"))  # to find course.py
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "notebooks_marimo"))  # to find course.py
 from course import PROVIDERS, client, embed, full_index, similarity
 
 TOP_K = 3  # number of passages put in the prompt
