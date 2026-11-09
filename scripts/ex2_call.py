@@ -1,23 +1,23 @@
-"""Exercice 2, la suite : appeler le modèle, avec une température.
+"""Exercise 2, next step: call the model, with a temperature.
 
-Le même prompt, 5 fois, à la température que vous choisissez.
+The same prompt, 5 times, at the temperature you choose.
 
-Lancer, depuis le dossier du cours :
-    uv run python scripts/ex2_call.py 0          # API (Groq), température 0
-    uv run python scripts/ex2_call.py 1.5        # API (Groq), température 1,5
-    uv run python scripts/ex2_call.py 1.5 local  # modèle local (Ollama)
+Run, from the course folder:
+    uv run python scripts/ex2_call.py 0          # API (Groq), temperature 0
+    uv run python scripts/ex2_call.py 1.5        # API (Groq), temperature 1.5
+    uv run python scripts/ex2_call.py 1.5 local  # local model (Ollama)
 
-À essayer :
-1. Le prompt ci-dessous, à 0 puis à 1,5 : une réponse courte et factuelle change-t-elle ?
-2. Changez PROMPT : "Give one name for a new medicine against migraine. Answer with the name only."
-   À 0, puis à 1,5 : combien de réponses différentes ?
+Try:
+1. The prompt below, at 0 then at 1.5: does a short, factual answer change?
+2. Change PROMPT: "Give one name for a new medicine against migraine. Answer with the name only."
+   At 0, then at 1.5: how many different answers?
 """
 import sys
 from pathlib import Path
 
 from openai import APIConnectionError
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "notebooks"))  # pour trouver course.py
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "notebooks"))  # to find course.py
 from course import PROVIDERS, client, normalise
 
 PROMPT = "What is the most common side effect of metformin? Answer in two words."
@@ -25,24 +25,24 @@ RUNS = 5
 
 
 def call_model(prompt, temperature, provider):
-    """Un appel au modèle : un message, une température, une réponse."""
+    """One call to the model: one message, one temperature, one answer."""
     response = client(provider).chat.completions.create(
         model=PROVIDERS[provider]["model"],
         messages=[{"role": "user", "content": prompt}],
         temperature=temperature,
-        max_tokens=1000,  # une limite de sécurité : arrête une réponse qui ne finit pas
+        max_tokens=1000,  # a safety limit: stops an answer that does not end
     )
     return (response.choices[0].message.content or "").strip()
 
 
 def main(temperature, provider):
-    """Le même prompt RUNS fois, puis le nombre de réponses différentes."""
-    print(f"{PROVIDERS[provider]['model']}, température {temperature}\n")
+    """The same prompt RUNS times, then the number of different answers."""
+    print(f"{PROVIDERS[provider]['model']}, temperature {temperature}\n")
     answers = [call_model(PROMPT, temperature, provider) for _ in range(RUNS)]
     for number, answer in enumerate(answers, start=1):
         print(f"{number}. {answer}")
     different = len({normalise(answer) for answer in answers})
-    print(f"\n{different} réponse(s) différente(s) sur {RUNS}")
+    print(f"\n{different} different answer(s) out of {RUNS}")
 
 
 if __name__ == "__main__":
@@ -50,4 +50,4 @@ if __name__ == "__main__":
     try:
         main(float(sys.argv[1]) if len(sys.argv) > 1 else 0.0, provider)
     except APIConnectionError:
-        sys.exit(f"Pas de connexion à {PROVIDERS[provider]['base_url']}. Local : Ollama est-il lancé ? API : êtes-vous en ligne ?")
+        sys.exit(f"No connection to {PROVIDERS[provider]['base_url']}. Local: is Ollama running? API: are you online?")

@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.25.2"
-app = marimo.App(width="medium", app_title="Exercice 2 : local vs API, température")
+app = marimo.App(width="medium", app_title="Exercise 2: local vs API, temperature")
 
 with app.setup(hide_code=True):
     import marimo as mo
@@ -12,14 +12,14 @@ with app.setup(hide_code=True):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    # Exercice 2 : local vs API, température
+    # Exercise 2: local vs API, temperature
 
 
-    1. Sur le web : la température dans Vittascience
-    2. La même question, sur votre portable et sur l'API
-    3. La même question, 5 fois, à une température que vous choisissez
+    1. On the web: the temperature in Vittascience
+    2. The same question, on your laptop and on the API
+    3. The same question, 5 times, at a temperature you choose
 
-    Option, si vous finissez plus tôt : demander des références, puis les vérifier.
+    Option, if you finish early: ask for references, then check them.
     """)
     return
 
@@ -27,17 +27,17 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 1 · Sur le web
+    ## 1 · On the web
 
-    > **L'idée :** le modèle tire chaque token au hasard, selon les probabilités. Le même prompt peut donner une autre réponse (slide "Même prompt, même réponse ?")
+    > **The idea:** the model draws each token at random, from the probabilities. The same prompt can give a different answer (slide "Same prompt, same answer?")
 
-    Ouvrez <https://fr.vittascience.com/ia/text>.
+    Open <https://fr.vittascience.com/ia/text>.
 
-    - Écrivez un prompt. Lancez-le 3 fois avec un hasard bas, puis 3 fois avec un hasard élevé
-    - Activez l'affichage des tokens et de leurs ids
+    - Write a prompt. Run it 3 times with low randomness, then 3 times with high randomness
+    - Turn on the display of the tokens and their ids
 
     /// details | Question
-    Où tourne ce modèle : sur votre portable ou sur un serveur ?
+    Where does this model run: on your laptop or on a server?
     ///
     """)
     return
@@ -46,12 +46,12 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 2 · Local ou API
+    ## 2 · Local or API
 
-    > **L'idée :** le même genre de modèle tourne sur votre portable ou chez un fournisseur. Le temps de réponse change, et l'endroit où vont vos données aussi
+    > **The idea:** the same kind of model runs on your laptop or at a provider. The response time changes, and so does the place where your data goes
 
-    **Choisissez** où tourne le modèle, puis appuyez sur le bouton. Posez la question une fois avec chacun.
-    Le modèle local peut prendre 30 à 60 s sur un portable sans GPU.
+    **Choose** where the model runs, then press the button. Ask the question once with each.
+    The local model can take 30 to 60 s on a laptop with no GPU.
     """)
     return
 
@@ -62,14 +62,14 @@ def _():
         value="What is the most common side effect of metformin? Answer in two words.", full_width=True
     )
     where = mo.ui.dropdown({"local (Ollama, llama3.2:3b)": "local", "API (Groq, gpt-oss-20b)": "api"}, value="local (Ollama, llama3.2:3b)")
-    ask_once = mo.ui.run_button(label="Demander au modèle")
+    ask_once = mo.ui.run_button(label="Ask the model")
     mo.vstack([prompt, mo.hstack([where, ask_once], justify="start")])
     return ask_once, prompt, where
 
 
 @app.cell(hide_code=True)
 def _(ask_once, prompt, where):
-    mo.stop(not ask_once.value, mo.md("Appuyez sur **Demander au modèle**."))
+    mo.stop(not ask_once.value, mo.md("Press **Ask the model**."))
     answer, seconds = ask(prompt.value, where.value, temperature=0)
     mo.md(f"**{seconds:.1f} s** · {answer}")
     return
@@ -78,11 +78,11 @@ def _(ask_once, prompt, where):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    - Local : plus lent sans GPU ; le texte reste sur votre portable
-    - API : rapide ; le texte part chez le fournisseur
+    - Local: slower with no GPU, the text stays on your laptop
+    - API: fast, the text goes to the provider
 
     /// details | Question
-    Vous travaillez avec des notes de patients. Lequel choisissez-vous, et pourquoi ?
+    You work with patient notes. Which one do you choose, and why?
     ///
     """)
     return
@@ -91,21 +91,21 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 3 · Température
+    ## 3 · Temperature
 
-    > **L'idée :** la température règle le hasard du tirage. Basse : presque toujours le token le plus probable. Haute : plus de variété (slide "Température")
+    > **The idea:** the temperature sets how random the draw is. Low: nearly always the most probable token. High: more variety (slide "Temperature")
 
-    La même question, 5 fois, sur l'API. Combien de réponses **différentes** ?
+    The same question, 5 times, on the API. How many **different** answers?
 
-    **Prédisez d'abord**, avant d'appuyer sur le bouton.
+    **Predict first**, before you press the button.
     """)
     return
 
 
 @app.cell(hide_code=True)
 def _():
-    guess_low = mo.ui.number(start=1, stop=5, value=1, label="réponses différentes à la température 0")
-    guess_high = mo.ui.number(start=1, stop=5, value=1, label="réponses différentes à la température 1,5")
+    guess_low = mo.ui.number(start=1, stop=5, value=1, label="different answers at temperature 0")
+    guess_high = mo.ui.number(start=1, stop=5, value=1, label="different answers at temperature 1.5")
     mo.vstack([guess_low, guess_high])
     return guess_high, guess_low
 
@@ -113,28 +113,28 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    **Changez** la température, puis appuyez sur le bouton. Objectif : vérifier vos deux prédictions, puis trouver une température où les 5 réponses sont différentes.
+    **Change** the temperature, then press the button. Target: check your two predictions, then find a temperature where the 5 answers are all different.
     """)
     return
 
 
 @app.cell(hide_code=True)
 def _():
-    temperature = mo.ui.slider(0, 1.5, step=0.1, value=0, label="température", show_value=True)
-    ask_five = mo.ui.run_button(label="Demander 5 fois")
+    temperature = mo.ui.slider(0, 1.5, step=0.1, value=0, label="temperature", show_value=True)
+    ask_five = mo.ui.run_button(label="Ask 5 times")
     mo.hstack([temperature, ask_five], justify="start")
     return ask_five, temperature
 
 
 @app.cell(hide_code=True)
 def _(ask_five, guess_high, guess_low, prompt, temperature):
-    mo.stop(not ask_five.value, mo.md("Appuyez sur **Demander 5 fois**."))
+    mo.stop(not ask_five.value, mo.md("Press **Ask 5 times**."))
     answers = [ask(prompt.value, "api", temperature.value)[0] for _ in range(5)]
     different = len({normalise(answer) for answer in answers})
     mo.vstack([
-        mo.md(f"**{different} réponse(s) différente(s)** à la température {str(temperature.value).replace('.', ',')}. "
-              f"Vos prédictions : {guess_low.value} à 0, {guess_high.value} à 1,5"),
-        mo.ui.table([{"réponse": answer} for answer in answers], selection=None),
+        mo.md(f"**{different} different answer(s)** at temperature {temperature.value}. "
+              f"Your predictions: {guess_low.value} at 0, {guess_high.value} at 1.5"),
+        mo.ui.table([{"answer": answer} for answer in answers], selection=None),
     ])
     return
 
@@ -142,11 +142,11 @@ def _(ask_five, guess_high, guess_low, prompt, temperature):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    **À retenir**
+    **Key points**
 
-    - La température change la variété des réponses, pas leur vérité
-    - À température 0, une API peut encore donner une autre réponse : votre requête passe dans un lot avec d'autres
-    - Température basse pour l'extraction et le code, plus haute pour les idées et les brouillons
+    - The temperature changes the variety of the answers, not their truth
+    - At temperature 0, an API can still give a different answer: your request runs in a batch with other requests
+    - Low temperature for extraction and code, higher for ideas and drafts
     """)
     return
 
@@ -155,18 +155,18 @@ def _():
 def _():
     mo.md(r"""
     ---
-    ## Option · Des références inventées
+    ## Option · Invented references
 
-    1. Dans la boîte de la partie 2, demandez : *"Give 3 peer-reviewed articles on (a narrow topic you know well), with authors, year, title, journal and DOI."* Demandez au modèle local et à l'API
-    2. Demandez la même chose dans une application de chat avec la recherche web activée. A-t-elle cherché ?
-    3. Vérifiez chaque référence :
-        - ouvrez `https://doi.org/` + le DOI : même titre ? même premier auteur ? Un DOI qui s'ouvre n'est pas une preuve
-        - sinon, cherchez le titre dans PubMed, puis dans Crossref
-        - trouvé : lisez le résumé. Dit-il ce que le modèle a dit ?
-    4. Donnez une étiquette à chacune : correcte / réelle avec des erreurs / réelle mais hors sujet / inventée
+    1. In the box of part 2, ask: *"Give 3 peer-reviewed articles on (a narrow topic you know well), with authors, year, title, journal and DOI."* Ask the local model and the API
+    2. Ask the same in a chat app with web search turned on. Did it search?
+    3. Check each reference:
+        - open `https://doi.org/` + the DOI: same title? same first author? A DOI that opens is not a proof
+        - else, search the title in PubMed, then in Crossref
+        - found: read the abstract. Does it say what the model said?
+    4. Give each one a label: correct / real with errors / real but off-topic / invented
 
     /// details | Question
-    Notre API et nos modèles locaux n'ont pas de recherche web. Qu'attendez-vous d'eux ?
+    Our API and our local models have no web search. What do you expect from them?
     ///
     """)
     return

@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.25.2"
-app = marimo.App(width="medium", app_title="Exercice 4 : RAG à la main")
+app = marimo.App(width="medium", app_title="Exercise 4: RAG by hand")
 
 with app.setup(hide_code=True):
     import marimo as mo
@@ -13,16 +13,16 @@ with app.setup(hide_code=True):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    # Exercice 4 : RAG à la main
+    # Exercise 4: RAG by hand
 
 
-    Les documents : 8 résumés de médicaments de l'EMA, et Narvelia, un médicament qui n'existe pas.
+    The documents: 8 EMA medicine summaries, and Narvelia, a medicine that does not exist.
 
-    1. Chercher : trouver les passages les plus proches d'une question
-    2. Répondre : mettre les passages dans le prompt
-    3. Une question à laquelle les documents ne répondent pas
+    1. Search: find the passages closest to a question
+    2. Answer: put the passages in the prompt
+    3. A question the documents do not answer
 
-    Option, si vous finissez plus tôt : la taille des passages compte-t-elle ?
+    Option, if you finish early: does the passage size matter?
     """)
     return
 
@@ -30,12 +30,12 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 1 · Chercher
+    ## 1 · Search
 
-    > **L'idée :** la recherche compare le sens de la question avec le sens de chaque passage, grâce aux embeddings (slide "Similarité cosinus")
+    > **The idea:** the search compares the meaning of the question with the meaning of each passage, with embeddings (slide "Cosine similarity")
 
-    Les documents sont découpés en passages de 150 mots, et chaque passage devient un vecteur de 384 nombres.
-    Cette cellule tourne une fois, sur votre portable : rien n'est envoyé.
+    The documents are cut into passages of 150 words, and each passage becomes a vector of 384 numbers.
+    This cell runs once, on your laptop: nothing is sent.
     """)
     return
 
@@ -43,14 +43,14 @@ def _():
 @app.cell(hide_code=True)
 def _():
     chunks, vectors = rag_index(150)
-    mo.md(f"{len(chunks)} passages · matrice de {vectors.shape[0]} × {vectors.shape[1]} nombres")
+    mo.md(f"{len(chunks)} passages · matrix of {vectors.shape[0]} × {vectors.shape[1]} numbers")
     return chunks, vectors
 
 
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    Deux textes à comparer : une question et une phrase.
+    Two texts to compare: a question and a sentence.
     """)
     return
 
@@ -66,7 +66,7 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    `question.value` est le texte de la boîte `question`. `embed` le transforme en vecteur de 384 nombres. Les 5 premiers :
+    `question.value` is the text in the `question` box. `embed` turns it into a vector of 384 numbers. The first 5:
     """)
     return
 
@@ -80,7 +80,7 @@ def _(question):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    **Écrivez une ligne** : la similarité entre `question.value` et `sentence.value`. `similarity(a, b)` compare deux vecteurs.
+    **Write one line**: the similarity between `question.value` and `sentence.value`. `similarity(a, b)` compares two vectors.
     """)
     return
 
@@ -99,17 +99,17 @@ def _(question, score, sentence):
 
 @app.cell(hide_code=True)
 def _():
-    mo.accordion({"💡 Indice": mo.md("`similarity` prend deux vecteurs : `embed(...)` pour chaque texte.")})
+    mo.accordion({"💡 Hint": mo.md("`similarity` takes two vectors: `embed(...)` for each text.")})
     return
 
 
 @app.cell(hide_code=True)
 def _(score):
-    mo.stop(score is ..., mo.md("Écrivez d'abord la ligne ci-dessus."))
+    mo.stop(score is ..., mo.md("First write the line above."))
     mo.md(f"""
-    **Score : {score:.2f}.** 1 : le même sens. 0 : aucun rapport.
+    **Score: {score:.2f}.** 1: the same meaning. 0: no relation.
 
-    **Changez la phrase.** Objectif : un score proche de 0 (un autre sujet), puis un score élevé avec d'autres mots (même sens).
+    **Change the sentence.** Target: a score near 0 (another topic), then a high score with different words (same meaning).
     """)
     return
 
@@ -117,19 +117,19 @@ def _(score):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    La recherche fait la même chose avec chaque passage, puis garde les 3 meilleurs scores.
+    The search does the same with each passage, then keeps the 3 best scores.
     """)
     return
 
 
 @app.cell(hide_code=True)
 def _(chunks, question, score, vectors):
-    mo.stop(score is ..., mo.md("Écrivez d'abord la ligne ci-dessus."))
+    mo.stop(score is ..., mo.md("First write the line above."))
     question_vector = embed(question.value)
     scores = [similarity(question_vector, vector) for vector in vectors]
     best = sorted(range(len(chunks)), key=lambda index: scores[index], reverse=True)[:3]
     mo.ui.table(
-        [{"score": round(float(scores[index]), 2), "passage": chunks[index]["id"], "texte": chunks[index]["text"][:200] + " …"} for index in best],
+        [{"score": round(float(scores[index]), 2), "passage": chunks[index]["id"], "text": chunks[index]["text"][:200] + " …"} for index in best],
         selection=None,
     )
     return (best,)
@@ -138,11 +138,11 @@ def _(chunks, question, score, vectors):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    - La recherche tourne sur votre portable, en moins d'une seconde
-    - Le passage le plus proche de la question n'est pas toujours celui qui contient la réponse
+    - The search runs on your laptop, in less than one second
+    - The passage closest to the question is not always the one that contains the answer
 
-    **Changez la question.** Objectif : trouver une question où le meilleur passage vient du mauvais médicament.
-    Essayez "Which medicines treat chronic kidney disease?" : deux documents contiennent la réponse.
+    **Change the question.** Target: find a question where the best passage comes from the wrong medicine.
+    Try "Which medicines treat chronic kidney disease?": two documents contain the answer.
     """)
     return
 
@@ -150,11 +150,11 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 2 · Répondre
+    ## 2 · Answer
 
-    > **L'idée :** le modèle ne connaît pas vos documents. Le programme met les meilleurs passages dans le prompt (slide "Le prompt de réponse")
+    > **The idea:** the model does not know your documents. The program puts the best passages in the prompt (slide "The answer prompt")
 
-    **Complétez les instructions** : trois règles. Utiliser seulement les passages. Citer l'id du passage. Si la réponse n'y est pas, le dire.
+    **Complete the instructions**: three rules. Use only the passages. Cite the passage id. If the answer is not there, say so.
     """)
     return
 
@@ -176,14 +176,14 @@ def _(instructions):
 def _(best, chunks, instructions, question):
     context = "\n\n".join(f"[{chunks[index]['id']}]\n{chunks[index]['text']}" for index in best)
     prompt = f"{instructions.value}\n\n<passages>\n{context}\n</passages>\n\nQuestion: {question.value}"
-    ask_model = mo.ui.run_button(label="Demander au modèle")
-    mo.vstack([mo.accordion({"Le prompt envoyé au modèle": mo.md(f"```\n{prompt}\n```")}), ask_model])
+    ask_model = mo.ui.run_button(label="Ask the model")
+    mo.vstack([mo.accordion({"The prompt sent to the model": mo.md(f"```\n{prompt}\n```")}), ask_model])
     return ask_model, prompt
 
 
 @app.cell(hide_code=True)
 def _(ask_model, prompt):
-    mo.stop(not ask_model.value, mo.md("Appuyez sur **Demander au modèle**."))
+    mo.stop(not ask_model.value, mo.md("Press **Ask the model**."))
     answer, seconds = ask(prompt, "api", temperature=0)
     mo.md(f"{answer}\n\n*{seconds:.1f} s, Groq*")
     return
@@ -192,11 +192,11 @@ def _(ask_model, prompt):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    - Le modèle lit seulement les 3 passages : la recherche décide de ce qu'il peut savoir
-    - Les ids vous permettent de vérifier chaque fait dans le document
+    - The model reads only the 3 passages: the search decides what it can know
+    - With the ids, you can check each fact in the document
 
     /// details | Question
-    La réponse est fausse. Où regardez-vous d'abord : le modèle ou les passages ?
+    The answer is wrong. Where do you look first: the model or the passages?
     ///
     """)
     return
@@ -205,14 +205,14 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 3 · Une question à laquelle les documents ne répondent pas
+    ## 3 · A question the documents do not answer
 
-    > **L'idée :** sans passage utile, un bon prompt fait dire au modèle qu'il ne sait pas, au lieu d'inventer (slide "Contre l'hallucination")
+    > **The idea:** with no useful passage, a good prompt makes the model say that it does not know, instead of making up an answer (slide "Against hallucination")
 
-    **Changez la question** de la partie 1, puis appuyez de nouveau sur le bouton. Par exemple : "How much does Wegovy cost in Belgium?", ou un médicament absent des documents.
+    **Change the question** in part 1, then press the button again. For example: "How much does Wegovy cost in Belgium?", or a medicine that is not in the documents.
 
     /// details | Question
-    Le modèle dit-il que la réponse n'est pas dans les documents ? Retirez votre troisième règle et réessayez.
+    Does the model say that the answer is not in the documents? Remove your third rule and try again.
     ///
     """)
     return
@@ -222,17 +222,17 @@ def _():
 def _():
     mo.md(r"""
     ---
-    ## Option · La taille des passages compte-t-elle ?
+    ## Option · Does the passage size matter?
 
-    Pour chaque question de test, le document attendu est connu. *hit@3* : la part des questions où il est dans les 3 meilleurs passages.
-    **Changez la taille**. Objectif : trouver une taille où hit@3 baisse.
+    For each test question, the expected document is known. *hit@3*: the share of questions where it is in the 3 best passages.
+    **Change the size**. Target: find a size where hit@3 goes down.
     """)
     return
 
 
 @app.cell(hide_code=True)
 def _():
-    size = mo.ui.slider(50, 500, step=50, value=150, label="mots par passage", show_value=True)
+    size = mo.ui.slider(50, 500, step=50, value=150, label="words per passage", show_value=True)
     size
     return (size,)
 
@@ -245,7 +245,7 @@ def _(size):
         any(sized_chunks[int(index)]["doc"] in item["sources"] for index in (sized_vectors @ embed(item["question"])).argsort()[::-1][:3])
         for item in expected
     )
-    mo.md(f"**hit@3 = {hits} / {len(expected)}** avec {len(sized_chunks)} passages de {size.value} mots")
+    mo.md(f"**hit@3 = {hits} / {len(expected)}** with {len(sized_chunks)} passages of {size.value} words")
     return
 
 

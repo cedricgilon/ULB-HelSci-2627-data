@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.25.2"
-app = marimo.App(width="medium", app_title="Exercice 1 : tokens")
+app = marimo.App(width="medium", app_title="Exercise 1: tokens")
 
 with app.setup(hide_code=True):
     import marimo as mo
@@ -10,24 +10,24 @@ with app.setup(hide_code=True):
     import checks
     from course import next_tokens, pieces
 
-    o200k = tiktoken.get_encoding("o200k_base")  # modèles OpenAI récents, ~200 000 tokens
+    o200k = tiktoken.get_encoding("o200k_base")  # recent OpenAI models, ~200,000 tokens
     gpt2 = tiktoken.get_encoding("gpt2")
 
 
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    # Exercice 1 : tokens
+    # Exercise 1: tokens
 
-    Pas d'API : tout tourne sur votre portable.
+    No API: everything runs on your laptop.
 
-    Un modèle ne lit pas des mots. Il lit des **tokens** : des morceaux de texte, chacun avec un numéro entier (id).
+    A model does not read words. It reads **tokens**: pieces of text, each with an integer number (id).
 
-    1. Sur le web : voir les tokens
-    2. Une phrase, cinq langues
-    3. Des mots de votre domaine, et le coût
+    1. On the web: see the tokens
+    2. One sentence, five languages
+    3. Words from your field, and the cost
 
-    Option, si vous finissez plus tôt : le token suivant, avec un petit modèle.
+    Option, if you finish early: the next token, with a small model.
     """)
     return
 
@@ -35,17 +35,17 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 1 · Sur le web
+    ## 1 · On the web
 
-    > **L'idée :** un modèle ne lit pas des mots mais des tokens, chacun avec un numéro (slide "Un modèle lit des tokens, pas des mots")
+    > **The idea:** a model reads tokens, not words, each with a number (slide "A model reads tokens, not words")
 
-    Ouvrez <https://tiktokenizer.vercel.app/> et choisissez `o200k_base`.
+    Open <https://tiktokenizer.vercel.app/> and select `o200k_base`.
 
-    - Tapez une phrase en anglais, puis la même phrase en français. Comptez les tokens.
-    - Tapez un mot de votre domaine : une molécule, une maladie, une technique de labo.
+    - Type a sentence in English, then the same sentence in another language you know. Count the tokens.
+    - Type a word from your field: a molecule, a disease, a lab technique.
 
     /// details | Question
-    Quel mot est coupé en le plus de morceaux ? Pourquoi ?
+    Which word is cut into the most pieces? Why?
     ///
     """)
     return
@@ -54,11 +54,11 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 2 · Une phrase, cinq langues
+    ## 2 · One sentence, five languages
 
-    > **L'idée :** le vocabulaire est appris surtout sur de l'anglais. À sens égal, une autre langue peut demander plus de tokens (slide "Un vocabulaire fixe")
+    > **The idea:** the vocabulary is learned mostly from English text. For the same meaning, another language can need more tokens (slide "A fixed vocabulary")
 
-    La même phrase en cinq langues. **Ajoutez votre langue** : une ligne de plus dans le dictionnaire.
+    The same sentence in five languages. **Add your language**: one more line in the dictionary.
     """)
     return
 
@@ -78,7 +78,7 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    `encode` découpe un texte en tokens et donne leurs numéros :
+    `encode` cuts a text into tokens and gives their numbers:
     """)
     return
 
@@ -92,14 +92,14 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    **Écrivez une ligne** : la fonction donne le nombre de tokens d'un texte. `encoding` est le tokenizer : `o200k` ou `gpt2`.
+    **Write one line**: the function gives the number of tokens in a text. `encoding` is the tokenizer: `o200k` or `gpt2`.
     """)
     return
 
 
 @app.function
 def count_tokens(encoding, text):
-    """Le nombre de tokens de text."""
+    """The number of tokens in text."""
     ...  # TODO
 
 
@@ -111,7 +111,7 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    mo.accordion({"💡 Indice": mo.md("`len(une_liste)` donne le nombre d'éléments d'une liste.")})
+    mo.accordion({"💡 Hint": mo.md("`len(a_list)` gives the number of items in a list.")})
     return
 
 
@@ -121,10 +121,10 @@ def _(sentences):
     mo.ui.table(
         [
             {
-                "langue": language,
+                "language": language,
                 "o200k (2024)": count_tokens(o200k, text),
                 "gpt2 (2019)": count_tokens(gpt2, text),
-                "vs anglais": f"{count_tokens(o200k, text) / english - 1:+.0%}" if english else "",
+                "vs English": f"{count_tokens(o200k, text) / english - 1:+.0%}" if english else "",
             }
             for language, text in sentences.items()
         ],
@@ -136,11 +136,11 @@ def _(sentences):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    - Même sens, nombre de tokens différent.
-    - Le tokenizer plus ancien, `gpt2`, a été construit sur un texte surtout anglais.
+    - Same meaning, different number of tokens.
+    - The older tokenizer, `gpt2`, was built on mostly English text.
 
     /// details | Question
-    Les prix des API sont par token. Qu'est-ce que cela veut dire pour un prompt en français ou en arabe ?
+    API prices are per token. What does this mean for a prompt in French or in Arabic?
     ///
     """)
     return
@@ -149,11 +149,11 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## 3 · Des mots de votre domaine, et le coût
+    ## 3 · Words from your field, and the cost
 
-    > **L'idée :** un mot rare est découpé en plusieurs tokens, et l'API facture au token (slide "Les mots rares sont découpés")
+    > **The idea:** a rare word is cut into several tokens, and the API charges per token (slide "Rare words are cut into pieces")
 
-    **Changez la liste** : trois mots de votre domaine.
+    **Change the list**: three words from your field.
     """)
     return
 
@@ -173,17 +173,17 @@ def _(my_terms):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    - Le modèle ne voit jamais les lettres d'un mot, seulement ses morceaux.
+    - The model does not see the letters of a word, only its pieces.
 
-    **Trouvez le prix** de `openai/gpt-oss-20b` chez Groq : tokens en entrée, USD par million.
-    Cherchez sur <https://console.groq.com/docs/models>
+    **Find the price** of `openai/gpt-oss-20b` at Groq: input tokens, USD per million.
+    Look at <https://console.groq.com/docs/models>
     """)
     return
 
 
 @app.cell(hide_code=True)
 def _():
-    price = mo.ui.number(start=0, stop=100, step=0.005, value=0, label="USD par million de tokens en entrée")
+    price = mo.ui.number(start=0, stop=100, step=0.005, value=0, label="USD per million input tokens")
     price
     return (price,)
 
@@ -200,9 +200,9 @@ def _(price, sentences):
     mo.ui.table(
         [
             {
-                "langue": language,
+                "language": language,
                 "tokens": count_tokens(o200k, text),
-                "USD pour un million de phrases": round((count_tokens(o200k, text) or 0) * price.value, 2),
+                "USD for one million sentences": round((count_tokens(o200k, text) or 0) * price.value, 2),
             }
             for language, text in sentences.items()
         ],
@@ -214,11 +214,11 @@ def _(price, sentences):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    **À retenir**
+    **Key points**
 
-    - Même sens, coût différent : une langue peu vue par le tokenizer coûte plus.
-    - Les mots techniques sont coupés en beaucoup de morceaux.
-    - La context window se compte aussi en tokens.
+    - Same meaning, different cost: a language the tokenizer saw less costs more.
+    - Technical words are cut into many pieces.
+    - The context window is also counted in tokens.
     """)
     return
 
@@ -227,12 +227,12 @@ def _():
 def _():
     mo.md(r"""
     ---
-    ## Option · Le token suivant
+    ## Option · The next token
 
-    `distilgpt2` est un petit modèle : 82 millions de paramètres. Ce n'est pas un modèle de chat.
-    Pour un texte, il donne une probabilité à chacun de ses 50 257 tokens d'être le suivant.
+    `distilgpt2` is a small model: 82 million parameters. It is not a chat model.
+    For a text, it gives each of its 50,257 tokens a probability to be the next one.
 
-    La première fois que vous appuyez sur le bouton, le modèle est téléchargé : environ 350 Mo.
+    The first time you press the button, the model is downloaded: about 350 MB.
     """)
     return
 
@@ -240,16 +240,16 @@ def _():
 @app.cell(hide_code=True)
 def _():
     start = mo.ui.text(value="The patient was given a dose of", full_width=True)
-    predict = mo.ui.run_button(label="Token suivant")
+    predict = mo.ui.run_button(label="Next token")
     mo.vstack([start, predict])
     return predict, start
 
 
 @app.cell(hide_code=True)
 def _(predict, start):
-    mo.stop(not predict.value, mo.md("Appuyez sur **Token suivant**."))
+    mo.stop(not predict.value, mo.md("Press **Next token**."))
     mo.ui.table(
-        [{"token suivant": repr(token), "probabilité": f"{p:.1%}"} for token, p in next_tokens(start.value)],
+        [{"next token": repr(token), "probability": f"{p:.1%}"} for token, p in next_tokens(start.value)],
         selection=None,
     )
     return
@@ -258,8 +258,8 @@ def _(predict, start):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    - **Faites le sampling vous-même** : copiez un des cinq tokens à la fin du texte, appuyez de nouveau sur le bouton. Faites-le cinq fois.
-    - Le texte est une chaîne de choix locaux. Pas de plan, pas de vrai ou faux : seulement du probable.
+    - **Do the sampling yourself**: copy one of the five tokens to the end of the text, then press the button again. Do it five times.
+    - The text is a chain of local choices. No plan, no true or false: only what is probable.
     """)
     return
 

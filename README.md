@@ -1,90 +1,90 @@
-# Introduction aux LLM
+# Introduction to LLMs
 
-HeLSci · Formation @data · 9–10 novembre 2026 · Brachet AW1.203
+HeLSci · @data training · 9–10 November 2026 · Brachet AW1.203
 
-## 1. Récupérer les fichiers
+## 1. Get the files
 
 ```sh
 git clone https://github.com/cedricgilon/ULB-HelSci-2627-data.git
 cd ULB-HelSci-2627-data
 ```
 
-Sans git : sur la page GitHub, **Code → Download ZIP**, puis décompressez.
+Without git: on the GitHub page, **Code → Download ZIP**, then unzip it.
 
-## 2. Installer
+## 2. Install
 
-Toutes les commandes se lancent dans un terminal, dans ce dossier.
+Run all commands in a terminal, in this folder.
 
-1. Installez uv, si ce n'est pas déjà fait : <https://docs.astral.sh/uv/getting-started/installation/>
-2. Installez les paquets (environ 10 minutes, surtout des téléchargements) :
+1. Install uv, if you do not have it yet: <https://docs.astral.sh/uv/getting-started/installation/>
+2. Install the packages (about 10 minutes, mostly downloads):
 
    ```sh
    uv venv
    uv pip install -r requirements.txt
    ```
 
-3. Créez deux clés API gratuites, sans carte de paiement :
-   - **Groq** sur <https://console.groq.com> (Groq avec un **q**, Grok avec un k est un autre produit)
-   - **Google AI Studio** sur <https://aistudio.google.com>
-4. Créez un fichier nommé `.env` dans **ce** dossier (celui de `requirements.txt`), avec vos deux clés :
+3. Make two free API keys, with no payment card:
+   - **Groq** at <https://console.groq.com> (Groq with a **q**: Grok with a k is a different product)
+   - **Google AI Studio** at <https://aistudio.google.com>
+4. Make a file named `.env` in **this** folder (the one with `requirements.txt`), with your two keys:
 
    ```
    GROQ_API_KEY=gsk_...
    GEMINI_API_KEY=...
    ```
 
-5. Lancez la vérification, jusqu'à **READY** :
+5. Run the check, until you see **READY**:
 
    ```sh
    uv run python 00-install-check/install_check.py
    ```
 
-Une ligne `FAIL` ? Les solutions sont dans `00-install-check/README.md` (en anglais). Sinon, montrez la sortie au formateur.
+A `FAIL` line? The fixes are in `00-install-check/README.md`. If that does not help, show the output to the trainer.
 
-Optionnel, le modèle local : installez Ollama (<https://ollama.com>), puis `ollama pull llama3.2:3b`. À éviter avec moins de 8 Go de mémoire : Groq suffit pour tout.
+Optional, the local model: install Ollama (<https://ollama.com>), then `ollama pull llama3.2:3b`. Not recommended with less than 8 GB of memory: Groq is enough for everything.
 
-## 3. Le contenu
+## 3. Contents
 
-| Dossier | Contenu |
+| Folder | Contents |
 |---|---|
-| `00-install-check/` | la vérification de l'installation |
-| `notebooks/` | les exercices, un notebook marimo chacun (`ex1_tokens.py` … `ex7_project.py`), avec `course.py` et `checks.py` |
-| `scripts/` | deux scripts Python à lancer dans le terminal : `ex2_call.py` (un appel au modèle, avec une température) et `ex4_chatbot.py` (un chatbot sur les documents de médicaments) |
-| `demos/` | la démo modèle de base vs modèle chat, et un notebook optionnel pour entraîner un mini-GPT |
-| `slides/` | les slides des deux jours, en PDF |
-| `data/` | les résumés, les documents de médicaments, le texte d'entraînement : sources et licences dans `data/README.md` |
+| `00-install-check/` | the install check |
+| `notebooks/` | the exercises, one marimo notebook each (`ex1_tokens.py` … `ex7_project.py`), with `course.py` and `checks.py` |
+| `scripts/` | two Python scripts to run in the terminal: `ex2_call.py` (one call to the model, with a temperature) and `ex4_chatbot.py` (a chatbot on the medicine documents) |
+| `demos/` | the base model vs chat model demo, and an optional notebook to train a mini-GPT |
+| `slides/` | the slides of the two days, as PDF |
+| `data/` | the abstracts, the medicine documents, the training text: sources and licences in `data/README.md` |
 
-Gardez la structure des dossiers telle quelle : les notebooks lisent leurs données dans `../data/`.
+Keep the folder structure as it is: the notebooks read their data from `../data/`.
 
-## 4. Ouvrir un exercice
+## 4. Open an exercise
 
 ```sh
 uv run marimo edit notebooks/ex1_tokens.py
 ```
 
-marimo n'exécute pas un notebook à l'ouverture : cliquez une fois sur **Run all** (en bas à droite).
+marimo does not run a notebook when it opens: click **Run all** once (bottom right).
 
-### Dans un exercice
+### In an exercise
 
-- Changez les données : une zone de texte, un curseur, une liste
-- Écrivez la ligne marquée `# TODO`. Un indice est dans la boîte fermée en dessous
-- Après chaque partie, une vérification affiche ✅ juste, ⏳ encore à faire, ou ❌ pas encore, avec un indice
-- Le modèle n'est appelé que quand vous cliquez sur son bouton ▶
-- Fini en avance ? Une option à la fin de chaque notebook
-- Les solutions sont partagées après la séance
+- Change the data: a text box, a slider, a list
+- Write the line marked `# TODO`. A hint is in the closed box below it
+- After each part, a check shows ✅ right, ⏳ still to do, or ❌ not yet, with a hint
+- The model is called only when you click its ▶ button
+- Finished early? There is an option at the end of each notebook
+- The solutions are shared after the session
 
-## 5. Lancer un script
+## 5. Run a script
 
 ```sh
-uv run python scripts/ex2_call.py 0            # Groq, température 0
-uv run python scripts/ex2_call.py 1.5 local    # Ollama, température 1,5
-uv run python scripts/ex4_chatbot.py           # le chatbot, avec Groq
-uv run python scripts/ex4_chatbot.py local     # le chatbot, avec Ollama
+uv run python scripts/ex2_call.py 0            # Groq, temperature 0
+uv run python scripts/ex2_call.py 1.5 local    # Ollama, temperature 1.5
+uv run python scripts/ex4_chatbot.py           # the chatbot, with Groq
+uv run python scripts/ex4_chatbot.py local     # the chatbot, with Ollama
 ```
 
-Ce qu'il faut essayer est écrit en haut de chaque script.
+What to try is written at the top of each script.
 
-## Confidentialité
+## Privacy
 
-- Ne mettez jamais vos clés API dans un notebook. Elles restent dans `.env`
-- Les exercices envoient du texte à Groq et à Google. Utilisez seulement les données fournies ici, ou des données publiques. **Pas de données personnelles ou confidentielles**
+- Never put your API keys in a notebook. They stay in `.env`
+- The exercises send text to Groq and to Google. Use only the data given here, or public data. **No personal or confidential data**
