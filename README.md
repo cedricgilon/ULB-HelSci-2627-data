@@ -19,9 +19,11 @@ Run all commands in a terminal, in this folder.
 2. Install the packages (about 10 minutes, mostly downloads):
 
    ```sh
-   uv venv
+   uv venv --python 3.12
    uv pip install -r requirements.txt
    ```
+
+   Error "No solution found when resolving dependencies"? Your `.venv` uses a Python that is too new. Delete the `.venv` folder, then run the two commands again.
 
 3. Make two free API keys, with no payment card:
    - **Groq** at <https://console.groq.com> (Groq with a **q**: Grok with a k is a different product)

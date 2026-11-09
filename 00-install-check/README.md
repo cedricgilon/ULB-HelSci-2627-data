@@ -13,7 +13,7 @@ one green run nothing is left to fetch.
 1. Install the packages, as described in the mail of 17 September:
 
    ```sh
-   uv venv
+   uv venv --python 3.12
    uv pip install -r requirements.txt
    ```
 

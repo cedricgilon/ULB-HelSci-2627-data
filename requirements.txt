@@ -1,7 +1,7 @@
 # Formation data - Introduction aux LLM (9-10 novembre)
 #
 # Créer l'environnement
-# > uv venv
+# > uv venv --python 3.12
 # Installation
 # > uv pip install -r requirements.txt
 #
